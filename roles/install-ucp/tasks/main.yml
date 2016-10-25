@@ -1,0 +1,61 @@
+---
+- name: UCP | Install controller
+  shell: docker run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.0.0-beta3 install --admin-username "admin" --admin-password "ucppassword" --host-address "{{ inventory_hostname }}"
+  ignore_errors: yes
+  when: ucp_replica is undefined and ucp_worker is undefined
+
+- name: UCP | Get manager token
+  shell: docker swarm join-token -q manager
+  register: ucp_manager_token
+  when: ucp_replica is undefined and ucp_worker is undefined
+
+- name: UCP | Get worker token
+  shell: docker swarm join-token -q worker
+  register: ucp_worker_token
+  when: ucp_replica is undefined and ucp_worker is undefined
+
+- name: UCP | Save manager and worker tokens
+  set_fact: manager_token="{{ ucp_manager_token.stdout }}" worker_token="{{ ucp_worker_token.stdout }}"
+  when: ucp_replica is undefined and ucp_worker is undefined
+
+# - name: UCP | Pull images (due to bug in beta1)
+#   shell: docker run --rm docker/ucp:2.0.0-beta3 images --list | xargs -L 1 sudo docker pull
+#   when: replica is defined
+
+- name: UCP | Install replicas
+  shell: docker swarm join --token "{{ hostvars[groups['ucp'][0]]['manager_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp'][0] }}"
+  ignore_errors: yes
+  when: ucp_replica is defined
+
+- name: UCP | Install workers
+  shell: docker swarm join --token "{{ hostvars[groups['ucp'][0]]['worker_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp'][0] }}"
+  ignore_errors: yes
+  when: ucp_worker is defined
+
+#- name: UCP | Bundle - install packages
+#  apt: name={{ item }} state=latest update_cache=yes
+#  with_items:
+#    - jq
+#  when: replica is undefined and worker is undefined
+#
+#- name: UCP | Bundle - get token
+#  shell: curl -sk -d '{"username":"admin","password":"ucppassword"}' "https://{{ groups['ucp'][0] }}/auth/login" | jq -r .auth_token
+#  register: ucp_auth_token
+#  when: replica is undefined and worker is undefined
+#
+#- name: UCP | Bundle - debug
+#  debug:
+#    msg: "token={{ ucp_auth_token.stdout }}"
+#  when: replica is undefined and worker is undefined
+#
+#- name: UCP | Bundle - generate
+#  get_url:
+#    url: "https://{{ groups['ucp'][0] }}/api/clientbundle"
+#    dest: /tmp/bundle.zip
+#    headers: "Authorization: Bearer {{ ucp_auth_token.stdout }}"
+#    validate_certs: no
+#  when: replica is undefined and worker is undefined
+#
+#- name: UCP | Bundle - download locally
+#  fetch: src=/tmp/bundle.zip dest=/tmp/flat=yes
+#  when: replica is undefined and worker is undefined

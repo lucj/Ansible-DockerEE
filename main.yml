@@ -1,0 +1,25 @@
+---
+
+# Install Docker Engine CS
+- hosts: all
+  sudo: True
+  roles:
+  - role: install-engine-cs
+  tags:
+  - engine
+
+# Install UCP
+- hosts: ucp
+  sudo: True
+  roles:
+  - role: install-ucp
+  tags:
+  - ucp
+
+# Install DTR
+- hosts: dtr
+  sudo: True
+  roles:
+  - role: install-dtr
+  tags:
+  - dtr
