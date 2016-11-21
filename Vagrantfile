@@ -3,7 +3,7 @@
 
 # global stuff
 network_conn   = "en0: Wi-Fi (AirPort)"
-ip_prefix = "192.168.0"
+ip_prefix = "192.168.1"
 
 Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: "echo Hello"
