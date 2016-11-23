@@ -1,29 +1,29 @@
 ---
 - name: UCP | Install controller
-  shell: docker run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:2.0.0-beta4 install --admin-username "admin" --admin-password "ucppassword" --host-address "{{ inventory_hostname }}"
+  shell: docker run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp install --admin-username "admin" --admin-password "ucppassword" --host-address "{{ inventory_hostname }}"
   ignore_errors: yes
-  when: ucp_replica is undefined and ucp_worker is undefined
+  when: ucp_manager is defined
 
 - name: UCP | Get manager token
   shell: docker swarm join-token -q manager
   register: ucp_manager_token
-  when: ucp_replica is undefined and ucp_worker is undefined
+  when: ucp_manager is defined
 
 - name: UCP | Get worker token
   shell: docker swarm join-token -q worker
   register: ucp_worker_token
-  when: ucp_replica is undefined and ucp_worker is undefined
+  when: ucp_manager is defined
 
 - name: UCP | Save manager and worker tokens
   set_fact: manager_token="{{ ucp_manager_token.stdout }}" worker_token="{{ ucp_worker_token.stdout }}"
-  when: ucp_replica is undefined and ucp_worker is undefined
+  when: ucp_manager is defined
 
 - name: UCP | Install replicas
-  shell: docker swarm join --token "{{ hostvars[groups['ucp'][0]]['manager_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp'][0] }}"
+  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['manager_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
   ignore_errors: yes
   when: ucp_replica is defined
 
 - name: UCP | Install workers
-  shell: docker swarm join --token "{{ hostvars[groups['ucp'][0]]['worker_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp'][0] }}"
+  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['worker_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
   ignore_errors: yes
-  when: ucp_worker is defined
+  when: ucp_manager is undefined and ucp_replica is undefined

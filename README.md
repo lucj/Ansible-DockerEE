@@ -1,5 +1,5 @@
 Deployment of Docker Datacenter
---------------------------------
+-------------------------------
 
 This playbook setup a cluster of Ubuntu (14.04) hosts running
 * Docker Engine CS
@@ -11,44 +11,109 @@ Inventory
 
 The inventory.ini file defines the host the server needs to be deployed on
 
-The following exemple of inventory.ini file defines:
-- 3 UCP controller (the first ucp node and the 2 nodes with the flag replica=1 under the ucp group)
-- 2 UCP workers (the last 2 nodes with the flag worker=1 under the ucp group)
-- 2 DTR manager (the 2 nodes within the dtr group)
+The following example of inventory.ini file defines:
+- 3 UCP controller (the main manager is identified with ucp_manager=1, the replicas are identified with ucp_replica=1)
+- 3 UCP workers
+- 3 DTR manager (the main manager is identified with dtr_manager=1, the replicas are identified with dtr_replica=1)
 
 ```
-[ucp]
-192.168.0.210
-192.168.0.211 ucp_replica=1
-192.168.0.212 ucp_replica=1
-192.168.0.213 ucp_worker=1
-192.168.0.214 ucp_worker=1
+[ucp_managers]
+192.168.0.230 ucp_manager=1
+192.168.0.231 ucp_replica=1
+192.168.0.232 ucp_replica=1
 
-[dtr]
-192.168.0.213 name=worker1
-192.168.0.214 name=worker2 dtr_replica=1
+[ucp_workers]
+192.168.0.233 dtr_manager=1
+192.168.0.234 dtr_replica=1
+192.168.0.235 dtr_replica=1
+
+[ucp:children]
+ucp_managers
+ucp_workers
+
+[dtr:children]
+ucp_workers
+
+[dtr:vars]
+replica_id=13b873dfa912
 ```
 
-The following exemple of inventory.ini file defines:
-- 1 UCP controller (the first node within the ucp group)
-- 3 UCP workers (the node with ucp_worker flag in the ucp group)
-- 3 DTR manager (the first node of within the dtr group and the 2 nodes with dtr_replica flag)
+Notes:
+- the nodes are structured in groups. Only the IP addresses within the ucp_managers and ucp_workers needs to be set.
+- the replica_id within the dtr:vars group is a random value that is used to setup DTR, you can leave it or pick another one.
 
-```
-[ucp]
-192.168.0.230
-192.168.0.233 ucp_worker=1
-192.168.0.234 ucp_worker=1
-192.168.0.235 ucp_worker=1
 
-[dtr]
-192.168.0.233 name=worker1
-192.168.0.234 name=worker2 dtr_replica=1
-192.168.0.235 name=worker3 dtr_replica=1
-```
-
-Running option
+Nodes creation
 --------------
+
+Several quick ways to create the nodes:
+
+1. Vagrant
+
+A simple Vagrant file is provided in this repo.
+
+```
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.provision "shell", inline: "echo Hello"
+
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 1
+  end
+
+  nodes_number = 3
+  (1..nodes_number).each do |i|
+    hostname = "ucp#{i}"
+    config.vm.define hostname do |ucp|
+      ucp.vm.hostname = hostname
+      ucp.vm.box = "ubuntu/trusty64"
+      ucp.vm.network "private_network", type: "dhcp"
+    end
+  end
+end
+```
+
+Change the nodes_number and run ```vagrant up```
+Once the machine created, get their IP address and add them in the inventory file.
+
+2. Terraform (on DigitalOcean)
+
+A simple ucp.tf file is provided
+
+```
+variable "do_token" {}
+
+# Configure the DigitalOcean Provider
+provider "digitalocean" {
+    token = "${var.do_token}"
+}
+
+# Create a web server
+resource "digitalocean_droplet" "ucp" {
+    count = "2"
+    image = "ubuntu-14-04-x64"
+    name = "ucp-${count.index+1}"
+    region = "lon1"
+    size = "2gb"
+}
+```
+
+Change the *count* to specify the number of node needed.
+Run the following command using you DigitalOcean token
+
+terraform apply -var="do_token=<DO_TOKEN>"
+
+A *terraform.tfstate* file will be created, pick the IP addresses of the nodes and add them to the inventory file.
+
+3. Your way
+
+The option above are only 2 simple and very limited ways to get you started, of course you can select other options and cloud providers.
+
+Running options
+---------------
 
 Several possible cases depending upon the way the nodes are created:
 
@@ -96,6 +161,14 @@ Application | URL | Comments
 ------------| --- | --------
 UCP         | https://ucp[0] | admin / ucppassword
 DTR         | https://dtr[0] |
+
+Disclaimer
+----------
+
+This playbook is dedicated to have Docker Datacenter up and runnin, in HA mode, g within a matter of minutes.
+This playbook should not be used as it is for production setup though.
+
+Pull Requests are welcome.
 
 License
 -------

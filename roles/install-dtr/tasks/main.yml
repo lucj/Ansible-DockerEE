@@ -1,16 +1,14 @@
 ---
-- name: DTR | Download package
-  shell: wget https://packages.docker.com/caas/ucp-2.0.0-beta4_dtr-2.1.0-beta4.tar.gz -O /tmp/docker-datacenter.tar.gz
-
-- name: DTR | Load image
-  shell: docker load < /tmp/docker-datacenter.tar.gz
+- name: DTR | Pull images
+  shell: docker pull docker/dtr
+  when: dtr_manager is defined or dtr_replica is defined
 
 - name: DTR | Install Manager
-  shell: docker run -it --rm docker/dtr:2.1.0-beta4 install --ucp-node "{{ hostvars[inventory_hostname]['name'] }}" --ucp-insecure-tls --ucp-username "admin" --ucp-password "ucppassword" --dtr-external-url "https://{{ inventory_hostname }}" --ucp-url "https://{{ groups['ucp'][0]}}" --replica-id 13b873dfa912
+  shell: docker run -it --rm docker/dtr install --ucp-node "{{ ansible_hostname }}" --ucp-insecure-tls --ucp-username "admin" --ucp-password "ucppassword" --dtr-external-url "https://{{ inventory_hostname }}" --ucp-url "https://{{ groups['ucp_managers'][0]}}" --replica-id "{{ hostvars[inventory_hostname]['replica_id'] }}"
   ignore_errors: yes
-  when: dtr_replica is undefined
+  when: dtr_manager is defined
 
 - name: DTR | Install Replica
-  shell: docker run -it --rm docker/dtr:2.1.0-beta4 join --ucp-node "{{ hostvars[inventory_hostname]['name'] }}" --ucp-insecure-tls --ucp-username "admin" --ucp-password "ucppassword" --ucp-url "https://{{ groups['ucp'][0]}}" -debug --existing-replica-id 13b873dfa912
+  shell: docker run -it --rm docker/dtr join --ucp-node "{{ ansible_hostname }}" --ucp-insecure-tls --ucp-username "admin" --ucp-password "ucppassword" --ucp-url "https://{{ groups['ucp_managers'][0]}}" --existing-replica-id "{{ hostvars[inventory_hostname]['replica_id'] }}"
   ignore_errors: yes
   when: dtr_replica is defined

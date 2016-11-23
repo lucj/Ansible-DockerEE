@@ -20,6 +20,7 @@
 # Install UCP
 - hosts: ucp
   sudo: True
+  serial: 1
   roles:
   - role: install-ucp
   tags:
@@ -28,6 +29,7 @@
 # Install DTR
 - hosts: dtr
   sudo: True
+  serial: 1
   roles:
   - role: install-dtr
   tags:
