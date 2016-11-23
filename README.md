@@ -48,7 +48,7 @@ Nodes creation
 
 Several quick ways to create the nodes:
 
-1. Vagrant
+### Vagrant
 
 A simple Vagrant file is provided in this repo.
 
@@ -79,7 +79,7 @@ end
 Change the nodes_number and run ```vagrant up```
 Once the machine created, get their IP address and add them in the inventory file.
 
-2. Terraform (on DigitalOcean)
+### Terraform (on DigitalOcean)
 
 A simple ucp.tf file is provided
 
@@ -108,7 +108,7 @@ terraform apply -var="do_token=<DO_TOKEN>"
 
 A *terraform.tfstate* file will be created, pick the IP addresses of the nodes and add them to the inventory file.
 
-3. Your way
+### Your way
 
 The option above are only 2 simple and very limited ways to get you started, of course you can select other options and cloud providers.
 
