@@ -98,13 +98,17 @@ resource "digitalocean_droplet" "ucp" {
     name = "ucp-${count.index+1}"
     region = "lon1"
     size = "2gb"
+    ssh_keys = ["FINGER_PRINTS_OR_IDS_OF_YOUR_SSH_KEY"]
 }
 ```
 
-Change the *count* to specify the number of node needed.
-Run the following command using you DigitalOcean token
+Modification that needs to be done:
 
-terraform apply -var="do_token=<DO_TOKEN>"
+- change the *count* to specify the number of node needed (total number of nodes of the ucp cluster)
+- change the ssh_keys so it uses the list of the fingerprints of your keys (eg: ssh_keys = ["e9:39:8c:f0:ae:6e:c6:e2:61:31:12:83:17:6e:fd:f3"])
+- run the following command using you DigitalOcean token:``` terraform apply -var="do_token=<DO_TOKEN>" ```
+
+Note: you can of course modify the other arguments to better match your needs.
 
 A *terraform.tfstate* file will be created, pick the IP addresses of the nodes and add them to the inventory file.
 
