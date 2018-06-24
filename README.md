@@ -169,7 +169,7 @@ DTR         | https://dtr[0] |
 Disclaimer
 ----------
 
-This playbook is dedicated to have Docker Datacenter up and runnin, in HA mode, g within a matter of minutes.
+This playbook is dedicated to have Docker Datacenter up and running, in HA mode, within a matter of minutes.
 This playbook should not be used as it is for production setup though.
 
 Pull Requests are welcome.
