@@ -1,6 +1,6 @@
 ---
 - name: UCP | Install controller
-  shell: docker run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp install --admin-username "admin" --admin-password "ucppassword" --host-address "{{ inventory_hostname }}"
+  shell: docker run --rm -it --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp install --admin-username "{{ UCP_ADMIN_USERNAME }}" --admin-password "{{ UCP_ADMIN_PASSWORD }}" --host-address "{{ inventory_hostname }}"
   ignore_errors: yes
   when: ucp_manager is defined
 
