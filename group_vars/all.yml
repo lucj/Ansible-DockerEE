@@ -1,0 +1,5 @@
+---
+
+####################### UCP ########################
+UCP_ADMIN_USERNAME: "admin"
+UCP_ADMIN_PASSWORD: "ucppassword"
