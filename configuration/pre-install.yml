@@ -1,0 +1,15 @@
+---
+
+# Pre-install | Create user
+- hosts: all
+  roles:
+  - role: create-user
+  tags:
+  - user
+
+# Pre-install | Setup RedHat subscription
+- hosts: all
+  roles:
+  - role: rhel-subscription
+  tags:
+  - subscription

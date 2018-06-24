@@ -1,0 +1,12 @@
+---
+
+# Remove all docker related files
+- hosts: all
+  sudo: True
+  roles:
+  - role: remove-ucp
+
+- hosts: all
+  sudo: True
+  roles:
+  - role: remove-swarm

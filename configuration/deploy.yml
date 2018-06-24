@@ -1,0 +1,24 @@
+---
+
+# Install Docker EE
+- hosts: all
+  roles:
+  - role: install-docker
+  tags:
+  - engine
+
+# Install UCP
+- hosts: ucp
+  serial: 1
+  roles:
+  - role: install-ucp
+  tags:
+  - ucp
+
+# Install DTR
+- hosts: dtr
+  serial: 1
+  roles:
+  - role: install-dtr
+  tags:
+  - dtr

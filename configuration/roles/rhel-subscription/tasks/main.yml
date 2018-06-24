@@ -1,0 +1,4 @@
+---
+- name: RHEL | Subscription
+  shell: subscription-manager register --username "{{ RHEL_USERNAME }}" --password "{{ RHEL_PASSWORD }}" --auto-attach --force
+  when: ansible_distribution == 'RedHat'

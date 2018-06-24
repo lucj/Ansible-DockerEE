@@ -1,0 +1,5 @@
+---
+- name: UCP | Uninstall controller
+  shell: docker container run --rm -it -v /var/run/docker.sock:/var/run/docker.sock --name ucp docker/ucp:3.0.1 uninstall-ucp --interactive
+  ignore_errors: yes
+  when: ucp_manager is defined

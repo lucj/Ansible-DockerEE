@@ -1,0 +1,7 @@
+---
+
+- hosts: all
+  roles:
+  - role: install-nDVP
+  tags:
+  - plugin

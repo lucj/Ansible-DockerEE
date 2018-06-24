@@ -1,0 +1,63 @@
+---
+- name: DockerEE - Ubuntu | Update distribution
+  become: true
+  apt:
+    update_cache: yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: DockerEE - Ubuntu | Install required libraries
+  become: true
+  apt: name={{ item }} state=latest update_cache=yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+  when: ansible_distribution == 'Ubuntu'
+
+- name: DockerEE - Ubuntu | Add Docker public key for CS packages
+  become: true
+  shell: curl -fsSL "{{ DOCKER_EE_URL }}/ubuntu/gpg" | sudo apt-key add -
+  when: ansible_distribution == 'Ubuntu'
+
+- name: DockerEE - Ubuntu | Add repository for new version
+  become: true
+  shell:
+    add-apt-repository "deb [arch=amd64] {{ DOCKER_EE_URL }}/ubuntu $(lsb_release -cs) stable-17.06"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: DockerEE - Ubuntu | Install daemon
+  apt: name=docker-ee update_cache=yes
+  when: ansible_distribution == 'Ubuntu'
+
+- name: DockerEE - RHEL | Setup DOCKERURL
+  become: true
+  shell:
+    echo {{ DOCKER_EE_URL }}/rhel > /etc/yum/vars/dockerurl
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+- name: DockerEE - RHEL | Store OS version
+  become: true
+  shell:
+     echo {{ RHEL_VERSION }} > /etc/yum/vars/dockerosversion
+  when: ansible_distribution == 'RedHat'
+
+- name: DockerEE - RHEL | Install required libraries
+  become: true
+  yum: name={{ item }} state=latest
+  with_items:
+    - yum-utils
+  ignore_errors: yes
+  when: ansible_distribution == 'RedHat'
+
+- name: DockerEE - RHEL | Add extra packages
+  become: true
+  shell:
+    yum-config-manager --enable rhel-7-server-extras-rpms
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+- name: DockerEE - RHEL | Add repository
+  become: true
+  shell:
+    yum-config-manager --add-repo "{{ DOCKER_EE_URL }}/rhel/docker-ee.repo"
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'

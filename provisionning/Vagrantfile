@@ -9,13 +9,13 @@ Vagrant.configure("2") do |config|
       v.cpus = 1
   end
 
-  nodes_number = 3
+  nodes_number = 1
   (1..nodes_number).each do |i|
     hostname = "ucp#{i}"
     config.vm.define hostname do |ucp|
       ucp.vm.hostname = hostname
-      ucp.vm.box = "ubuntu/trusty64"
-      ucp.vm.network "private_network", type: "dhcp"
+      ucp.vm.box = "ubuntu/xenial64"
+      ucp.vm.network "public_network"
     end
   end
 

@@ -1,0 +1,4 @@
+---
+- name: Remove swarm
+  shell: docker swarm leave --force
+  ignore_errors: yes

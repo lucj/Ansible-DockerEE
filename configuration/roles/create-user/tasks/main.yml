@@ -1,0 +1,21 @@
+---
+- name: User | Create 'ops' group
+  group:
+    name: ops
+    state: present
+
+- name: User | Allow 'ops' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%ops'
+    line: '%ops ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: User | Create "deploy" user and add to "ops" group
+  user: name=deploy groups=ops append=yes state=present createhome=yes
+
+- name: User | Setup authorized keys for user "deploy"
+  authorized_key:
+    user: deploy
+    key: "{{ lookup('file', 'files/id_rsa.pub') }}"
