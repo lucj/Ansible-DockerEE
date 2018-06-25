@@ -8,4 +8,4 @@ terraform.tfstate*
 .terraform*
 inventory.ini
 DockerEE.lic
-configuration/inventory
+configuration/inventory/inventory.tpl
