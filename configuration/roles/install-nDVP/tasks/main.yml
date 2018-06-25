@@ -4,7 +4,7 @@
   yum:
     name: nfs-utils
     state: latest
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  when: ansible_os_family == 'RedHat' and app is defined
 
 - name: nDVP | Add iSCSI package
   become: true
@@ -14,28 +14,36 @@
     - iscsi-initiator-utils
     - sg3_utils
     - device-mapper-multipath
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  when: ansible_os_family == 'RedHat' and app is defined
 
 - name: nDVP | Enable iSCSI
   become: true
-  shell: mpathconf --enable --with_multipathd y && systemctl enable iscsid multipathd && systemctl start iscsid multipathd
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  shell: mpathconf --enable --with_multipathd y
+  when: ansible_os_family == 'RedHat' and app is defined
+
+- name: nDVP | Enable iscsid and multipathd
+  become: true
+  systemd: name={{ item }} enabled=yes state=started
+  with_items:
+    - iscsid
+    - multipathd
+  when: ansible_os_family == 'RedHat' and app is defined
 
 - name: nDVP | Create config folder
   become: true
   file:
     path: /etc/netappdvp
     state: directory
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  when: ansible_os_family == 'RedHat' and app is defined
 
 - name: nDVP | Copy configuration file
   become: true
   copy:
     src: configSAN.json
     dest: /etc/netappdvp/configSAN.json
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  when: ansible_os_family == 'RedHat' and app is defined
 
 - name: nDVP | Install plugin for SAN
   become: true
   shell: docker plugin install --grant-all-permissions --alias netappsan netapp/ndvp-plugin:17.07 config=configSAN.json
-  when: (ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS') and app is defined
+  when: ansible_os_family == 'RedHat' and app is defined
