@@ -1,4 +1,4 @@
 .vagrant
 *.retry
 *.tfstate
-group_vars/all.yml
+configuration/group_vars/all.yml
