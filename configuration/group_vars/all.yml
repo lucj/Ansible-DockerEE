@@ -1,0 +1,19 @@
+---
+
+RHEL_VERSION: 7
+DTR_VERSION: 2.5.2
+UCP_VERSION: 3.0.2
+
+# Credentials for RHEL activation
+RHEL_USERNAME: lbnunix
+RHEL_PASSWORD: lbnpassword
+
+# Docker EE licence URL
+DOCKER_EE_URL: "https://storebits.docker.com/ee/m/sub-469aadd1-5db6-4175-9093-14659557f587"
+
+# UCP credentials
+UCP_USERNAME: admin
+UCP_PASSWORD: adminadmin
+
+# DTR replica ID for joining first DTR node
+replica_id: 13b873dfa912
