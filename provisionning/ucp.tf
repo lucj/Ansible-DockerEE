@@ -14,6 +14,9 @@ resource "digitalocean_droplet" "ucp_master" {
   size = "${var.do_droplet_size}"
   ssh_keys = "${var.do_ssh_key}"
 }
+output "ucp_master" {
+  value = "${digitalocean_droplet.ucp_master.*.ipv4_address}"
+}
 
 # Create worker nodes
 resource "digitalocean_droplet" "ucp_worker" {
@@ -23,4 +26,38 @@ resource "digitalocean_droplet" "ucp_worker" {
   region = "${var.do_region}"
   size = "${var.do_droplet_size}"
   ssh_keys = "${var.do_ssh_key}"
+}
+output "ucp_worker" {
+  value = "${digitalocean_droplet.ucp_worker.*.ipv4_address}"
+}
+
+## Output
+resource "template_file" "master_ansible" {
+  count = "${var.ucp_master_number}"
+  template = "$${name} $${ip} $${role}"
+  vars {
+    name  = "${var.do_droplet_prefix}-master-${count.index+1}"
+    ip = "ansible_host=${element(digitalocean_droplet.ucp_master.*.ipv4_address, count.index)}"
+    role = "${count.index == 0 ? "ucp_leader=1" : "ucp_manager=1"}"
+  }
+}
+
+resource "template_file" "worker_ansible" {
+  count = "${var.ucp_worker_number}"
+  template = "${count.index < 2 ? "$${name} $${ip} $${role}" : "$${name} $${ip}"}"
+  vars {
+    name  = "${var.do_droplet_prefix}-worker-${count.index+1}"
+    ip = "ansible_host=${element(digitalocean_droplet.ucp_worker.*.ipv4_address, count.index)}"
+    role = "${count.index == 0 ? "dtr_leader=1" : "dtr_replica=1"}"
+  }
+}
+
+resource "template_dir" "inventory" {
+  source_dir = "${path.module}/templates"
+  destination_dir = "../configuration/inventory"
+
+  vars {
+    master_hosts = "${join("\n",template_file.master_ansible.*.rendered)}"
+    worker_hosts = "${join("\n",template_file.worker_ansible.*.rendered)}"
+  }
 }
