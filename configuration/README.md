@@ -68,18 +68,19 @@ Notes:
 - the replica_id within the dtr:vars group is a random value that is used to setup DTR, you can leave it or pick another one.
 
 
-Running options
----------------
+Pre-installation
+----------------
 
-* Create "deploy" user (to be used in the following steps)
+* Create "deploy" user (to be used in the following steps) and setup subscription (needed for RHEL)
 
 ```
 $ ansible-playbook -i inventory.ini -k -u root pre-install.yml
 ```
 
-note: the command above suppose we have a root user with a password. If the access is allowed from another USER (with sudo rights) through an ssh key pair, the following command should be used.
+note: the command above needs the root password, this one will not be used in the deployment steps as the public/private keys of the "deploy" user will be used instead.
 
-```ansible-playbook -i inventory.ini -u USER --private-key PATH_TO_KEY pre-install.yml```
+Deployment in multiple steps
+----------------------------
 
 * Install Docker daemon
 
@@ -99,16 +100,26 @@ $ ansible-playbook -i inventory.ini --private-key=id_rsa -u deploy -t ucp deploy
 $ ansible-playbook -i inventory.ini --private-key=id_rsa -u deploy -t dtr deploy.yml
 ```
 
-Split the installation
+Deployment in one step
 ----------------------
 
-In order to monitor the installation process, the commands can be splitted in 3 using tags:
+Even if it's best to use the approach above to make sure each sequential steps went fine, it's possible to run the installation in one step (leaving apart the pre-install step).
 
 ```
-ansible-playbook -i inventory.ini -t subscription [OPTS] deploy.yml
-ansible-playbook -i inventory.ini -t engine [OPTS] deploy.yml
-ansible-playbook -i inventory.ini -t ucp [OPTS] deploy.yml
-ansible-playbook -i inventory.ini -t dtr [OPTS] deploy.yml
+ansible-playbook -i inventory.ini --private-key=id_rsa -u deploy deploy.yml
+```
+
+nDVP Storage plugin
+-------------------
+
+An additional playbook is in charge of the installation and setup of nDVP, a Docker storage plugin used to connect to an underlying NetApp LUN storage.
+
+Notes: 
+- SAN storage: the connection information to the LUN storage need to be added first in the *roles/install-nDVP/files/configSAN.json* file
+- NAS storage: details to be added
+
+```
+ansible-playbook -i inventory.ini --private-key=id_rsa -u deploy nDVP-plugin.yml
 ```
 
 Using the application
@@ -118,7 +129,7 @@ Once installed, the application can be access on the following URLs
 
 Application | URL | Comments
 ------------| --- | --------
-UCP         | https://ucp[0] | admin / ucppassword
+UCP         | https://ucp[0] | UCP_USERNAME / UCP_PASSWORD
 DTR         | https://dtr[0] |
 
 Disclaimer

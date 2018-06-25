@@ -87,3 +87,4 @@
   systemd:
     state: started
     name: docker
+    enabled: yes
