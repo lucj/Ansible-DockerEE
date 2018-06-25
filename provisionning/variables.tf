@@ -12,7 +12,7 @@ variable "do_droplet_image" {
 }
 variable "do_droplet_size" {
   description = "Droplet size"
-  default = "2gb"
+  default = "4gb"
 }
 variable "do_droplet_prefix" {
   description = "Prefix for droplets"
