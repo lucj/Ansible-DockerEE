@@ -1,5 +1,6 @@
 ---
 - name: DTR | Uninstall controller
-  shell: docker run -it --rm docker/dtr:2.5.2 destroy --ucp-insecure-tls
+  become: true
+  shell: docker run -it --rm docker/dtr:{{ DTR_VERSION }} destroy --ucp-insecure-tls
   ignore_errors: yes
   when: dtr_leader is defined or dtr_replica is defined
