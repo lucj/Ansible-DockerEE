@@ -9,3 +9,4 @@ inventory.ini
 DockerEE.lic
 configuration/inventory/inventory.tpl
 group_vars/all.yml
+configuration/group_vars/all.yml
