@@ -1,40 +1,43 @@
 ---
+- name: UCP | Copy licence file
+  copy:
+    src: DockerEE.lic
+    dest: /tmp/DockerEE.lic
+  when: ucp_leader is defined
+
 - name: UCP | Pull image
-  shell: docker image pull docker/ucp:"{{ UCP_VERSION }}"
+  become: true
+  shell: docker image pull "docker/ucp:{{ UCP_VERSION }}"
   when: ucp_leader is defined
 
 - name: UCP | Install controller
-  shell: |
-    docker container run --rm -it
-    --name ucp
-    -v /var/run/docker.sock:/var/run/docker.sock
-    docker/ucp:"{{ UCP_VERSION }}"
-    install
-    --admin-username "{{ UCP_USERNAME }}"
-    --admin-password "{{ UCP_PASSWORD }}"
-    --host-address "{{ inventory_hostname }}"
+  become: true
+  shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ UCP_VERSION }} install --admin-username "{{ UCP_USERNAME }}" --admin-password "{{ UCP_PASSWORD }}" --host-address "{{ inventory_hostname }}" --license "$(cat /tmp/DockerEE.lic)" --force-insecure-tcp --force-minimums
   when: ucp_leader is defined
 
 - name: UCP | Get manager token
+  become: true
   shell: docker swarm join-token -q manager
   register: ucp_manager_token
   when: ucp_leader is defined
 
 - name: UCP | Get worker token
+  become: true
   shell: docker swarm join-token -q worker
   register: ucp_worker_token
   when: ucp_leader is defined
 
 - name: UCP | Save manager and worker tokens
+  become: true
   set_fact: manager_token="{{ ucp_manager_token.stdout }}" worker_token="{{ ucp_worker_token.stdout }}"
   when: ucp_leader is defined
 
 - name: UCP | Install additional managers
+  become: true
   shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['manager_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
-  ignore_errors: yes
   when: ucp_manager is defined
 
 - name: UCP | Install workers
+  become: true
   shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['worker_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
-  ignore_errors: yes
   when: ucp_leader is undefined and ucp_manager is undefined

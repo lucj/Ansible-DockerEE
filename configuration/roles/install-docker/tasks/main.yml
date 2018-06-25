@@ -20,13 +20,14 @@
   shell: curl -fsSL "{{ DOCKER_EE_URL }}/ubuntu/gpg" | sudo apt-key add -
   when: ansible_distribution == 'Ubuntu'
 
-- name: DockerEE - Ubuntu | Add repository for new version
+- name: DockerEE - Ubuntu | Add repository
   become: true
   shell:
     add-apt-repository "deb [arch=amd64] {{ DOCKER_EE_URL }}/ubuntu $(lsb_release -cs) stable-17.06"
   when: ansible_distribution == 'Ubuntu'
 
 - name: DockerEE - Ubuntu | Install daemon
+  become: true
   apt: name=docker-ee update_cache=yes
   when: ansible_distribution == 'Ubuntu'
 
@@ -34,7 +35,13 @@
   become: true
   shell:
     echo {{ DOCKER_EE_URL }}/rhel > /etc/yum/vars/dockerurl
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'RedHat'
+
+- name: DockerEE - CentOS | Setup DOCKERURL
+  become: true
+  shell:
+    echo {{ DOCKER_EE_URL }}/centos > /etc/yum/vars/dockerurl
+  when: ansible_distribution == 'CentOS'
 
 - name: DockerEE - RHEL | Store OS version
   become: true
@@ -42,22 +49,41 @@
      echo {{ RHEL_VERSION }} > /etc/yum/vars/dockerosversion
   when: ansible_distribution == 'RedHat'
 
-- name: DockerEE - RHEL | Install required libraries
+- name: DockerEE - RHEL / CentOS | Install required libraries
   become: true
   yum: name={{ item }} state=latest
   with_items:
     - yum-utils
   ignore_errors: yes
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
 
 - name: DockerEE - RHEL | Add extra packages
   become: true
   shell:
     yum-config-manager --enable rhel-7-server-extras-rpms
-  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+  when: ansible_distribution == 'RedHat'
 
 - name: DockerEE - RHEL | Add repository
   become: true
   shell:
     yum-config-manager --add-repo "{{ DOCKER_EE_URL }}/rhel/docker-ee.repo"
+  when: ansible_distribution == 'RedHat'
+
+- name: DockerEE - CentOS | Add repository
+  become: true
+  shell:
+    yum-config-manager --add-repo "{{ DOCKER_EE_URL }}/centos/docker-ee.repo"
+  when: ansible_distribution == 'CentOS'
+
+- name: DockerEE - RHEL / CentOS | Install daemon
+  become: true
+  yum:
+    name: docker-ee
+    state: latest
   when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+- name: DockerEE | Make sure Docker service is running
+  become: true
+  systemd:
+    state: started
+    name: docker
