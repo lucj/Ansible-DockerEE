@@ -1,0 +1,8 @@
+---
+- name: Firewalld | Remove to make sure control plane and data plane required ports are opened
+  become: true
+  systemd:
+    state: stopped
+    name: firewalld
+    enabled: no
+  ignore_errors: yes

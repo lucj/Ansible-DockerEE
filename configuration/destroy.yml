@@ -1,12 +1,18 @@
 ---
 
-# Remove all docker related files
+# Remove UCP
 - hosts: all
-  sudo: True
   roles:
   - role: remove-ucp
 
+# Leave swarm
 - hosts: all
-  sudo: True
   roles:
   - role: remove-swarm
+
+# Remove Docker daemon
+- hosts: all
+  roles:
+  - role: remove-docker
+  tags:
+  - daemon
