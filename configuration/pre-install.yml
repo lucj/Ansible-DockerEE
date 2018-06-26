@@ -20,3 +20,17 @@
   - role: setup-ntp
   tags:
   - ntp
+
+# Pre-install | NFS client
+- hosts: all
+  roles:
+  - role: setup-nfs
+  tags:
+  - nfs
+
+# Pre-install | Firewalld
+- hosts: all
+  roles:
+  - role: remove-firewalld
+  tags:
+  - firewalld
