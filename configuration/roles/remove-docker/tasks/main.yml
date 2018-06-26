@@ -1,3 +1,14 @@
-# ---
-# - name: Remove Docker
-#   shell: TODO
+---
+- name: Docker | Remove daemon
+  become: true
+  yum:
+    name: docker-ee
+    state: absent
+  when: ansible_os_family == 'RedHat'
+
+- name: Docker | Remove folder
+  become: true
+  file:
+    path: /var/lib/docker
+    state: absent 
+  
