@@ -1,4 +1,12 @@
 .vagrant
 *.retry
 *.tfstate
+.DS_Store
+terraform.tfvars
+terraform.tfstate*
+.terraform*
+inventory.ini
+DockerEE.lic
+configuration/inventory/inventory.tpl
+group_vars/all.yml
 configuration/group_vars/all.yml
