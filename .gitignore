@@ -1,4 +1,3 @@
-.vagrant
-*.retry
-*.tfstate
-configuration/group_vars/all.yml
+provisionning/*.tfstate
+provisionning/.vagrant
+configuration/*.retry
