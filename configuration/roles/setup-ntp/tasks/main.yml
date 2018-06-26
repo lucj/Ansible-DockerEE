@@ -1,0 +1,20 @@
+---
+- name: NTP | Install package
+  become: true
+  yum: name={{ item }} state=latest
+  with_items:
+    - ntp
+    - ntpdate
+  when: ansible_os_family == 'RedHat'
+
+- name: NTP | Stop service
+  become: true
+  systemd: name=ntpd enabled=yes state=stopped
+
+- name: NTP | Configure with ntp server
+  become: true
+  shell: ntpdate pool.ntp.org
+
+- name: NTP | Start service
+  become: true
+  systemd: name=ntpd enabled=yes state=restarted

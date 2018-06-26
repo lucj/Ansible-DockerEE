@@ -13,3 +13,10 @@
   - role: rhel-subscription
   tags:
   - subscription
+
+# Pre-install | NTP
+- hosts: all
+  roles:
+  - role: setup-ntp
+  tags:
+  - ntp
