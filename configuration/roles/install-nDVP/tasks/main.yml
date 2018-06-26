@@ -1,11 +1,4 @@
 ---
-- name: nDVP | Add NFS package
-  become: true
-  yum:
-    name: nfs-utils
-    state: latest
-  when: ansible_os_family == 'RedHat'
-
 - name: nDVP | Add iSCSI package
   become: true
   yum: name={{ item }} state=latest
