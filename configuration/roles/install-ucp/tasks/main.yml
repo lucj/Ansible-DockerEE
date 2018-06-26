@@ -12,7 +12,7 @@
 
 - name: UCP | Install controller
   become: true
-  shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ UCP_VERSION }} install --admin-username "{{ UCP_USERNAME }}" --admin-password "{{ UCP_PASSWORD }}" --host-address "{{ inventory_hostname }}" --license "$(cat /tmp/DockerEE.lic)"
+  shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ UCP_VERSION }} install --admin-username "{{ UCP_USERNAME }}" --admin-password "{{ UCP_PASSWORD }}" --host-address "{{ inventory_hostname }}" --license "$(cat /tmp/DockerEE.lic)" --force-minimums
   when: ucp_leader is defined
 
 - name: UCP | Get manager token
