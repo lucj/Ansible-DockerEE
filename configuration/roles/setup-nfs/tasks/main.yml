@@ -1,0 +1,7 @@
+---
+- name: NFS | Install package
+  become: true
+  yum: name={{ item }} state=latest
+  with_items:
+    - nfs-utils
+  when: ansible_os_family == 'RedHat'
