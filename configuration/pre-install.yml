@@ -28,7 +28,7 @@
   tags:
   - nfs
 
-# Pre-install | Firewalld
+# Pre-install | Disable firewalld
 - hosts: all
   roles:
   - role: remove-firewalld
