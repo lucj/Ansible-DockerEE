@@ -3,5 +3,6 @@ provisionning/.vagrant
 configuration/*.retry
 configuration/inventories/*.ini
 configuration/id_rsa
+configuration/group_vars/all.yml
 configuration/roles/install-nDVP/files/config*.json
 configuration/roles/install-ucp/files/*.lic

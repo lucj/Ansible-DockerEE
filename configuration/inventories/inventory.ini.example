@@ -16,14 +16,3 @@ ucp_workers
 
 [dtr:children]
 ucp_workers
-
-[all:vars]
-RHEL_VERSION=7
-RHEL_USERNAME=
-RHEL_PASSWORD=
-UCP_VERSION=3.0.2
-DTR_VERSION=2.5.3
-REPLICA_ID=13b873dfa912
-DOCKER_EE_URL=https://storebits.docker.com/ee/m/sub-xxx-yyy
-UCP_USERNAME="administrator"
-UCP_PASSWORD="admin123"
