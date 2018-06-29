@@ -1,3 +1,7 @@
 provisionning/*.tfstate
 provisionning/.vagrant
 configuration/*.retry
+configuration/inventories/*.ini
+configuration/id_rsa
+configuration/roles/install-nDVP/files/config*.json
+configuration/roles/install-ucp/files/*.lic
