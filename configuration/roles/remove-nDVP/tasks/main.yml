@@ -1,0 +1,5 @@
+---
+- name: nDVP | Remove plugin
+  become: true
+  ignore_errors: yes
+  shell: docker plugin disable netappsan && docker plugin rm netappsan
