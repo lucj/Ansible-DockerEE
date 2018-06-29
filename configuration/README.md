@@ -45,22 +45,9 @@ ucp_workers
 
 [dtr:children]
 ucp_workers
-
-[ucp:vars]
-UCP_VERSION=3.0.2
-
-[dtr:vars]
-DTR_VERSION=2.5.2
-replica_id=13b873dfa912
-
-[all:vars]
-RHEL_VERSION=7
-RHEL_USERNAME=
-RHEL_PASSWORD=
-DOCKER_EE_URL=https://storebits.docker.com/ee/m/sub-xxx-yyy
-UCP_USERNAME="administrator"
-UCP_PASSWORD="admin123"
 ```
+
+Note: all required variables are in the *group_vars/all.yml* file.
 
 Notes:
 - some additional variables are provided such as UCP and DTR versions
