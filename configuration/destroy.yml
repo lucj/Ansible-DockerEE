@@ -16,3 +16,10 @@
   - role: remove-docker
   tags:
   - daemon
+
+# Remove nDVP plugin
+- hosts: all
+  roles:
+  - role: remove-nDVP
+  tags:
+  - nDVP
