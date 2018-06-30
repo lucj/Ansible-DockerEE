@@ -17,12 +17,12 @@
 
 - name: DTR | Installation
   become: true
-  shell: docker run --rm docker/dtr:{{ DTR_VERSION }} install --ucp-node "{{ hostvars[inventory_hostname]['ucp_node'] }}" --ucp-insecure-tls --ucp-username "{{ UCP_USERNAME }}" --ucp-password "{{ UCP_PASSWORD }}" --ucp-url "https://{{ groups['ucp_managers'][0]}}" --replica-id "{{ REPLICA_ID }}"
+  shell: docker run --rm docker/dtr:{{ DTR_VERSION }} install --ucp-node "{{ hostvars[inventory_hostname]['ucp_node'] }}" --ucp-insecure-tls --ucp-username "{{ UCP_USERNAME }}" --ucp-password "{{ UCP_PASSWORD }}" --ucp-url "https://{{ hostvars[groups['ucp_managers'][0]]['ansible_host'] }}" --replica-id "{{ REPLICA_ID }}"
   ignore_errors: yes
   when: dtr_leader is defined
 
 - name: DTR | Install Replica
   become: true
-  shell: docker run --rm docker/dtr:{{ DTR_VERSION }} join --ucp-node "{{ hostvars[inventory_hostname]['ucp_node'] }}" --ucp-insecure-tls --ucp-username "{{ UCP_USERNAME }}" --ucp-password "{{ UCP_PASSWORD }}" --ucp-url "https://{{ groups['ucp_managers'][0]}}" --existing-replica-id "{{ REPLICA_ID }}"
+  shell: docker run --rm docker/dtr:{{ DTR_VERSION }} join --ucp-node "{{ hostvars[inventory_hostname]['ucp_node'] }}" --ucp-insecure-tls --ucp-username "{{ UCP_USERNAME }}" --ucp-password "{{ UCP_PASSWORD }}" --ucp-url "https://{{ hostvars[groups['ucp_managers'][0]]['ansible_host'] }}" --existing-replica-id "{{ REPLICA_ID }}"
   ignore_errors: yes
   when: dtr_replica is defined

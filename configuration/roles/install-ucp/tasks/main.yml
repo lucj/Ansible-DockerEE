@@ -12,7 +12,7 @@
 
 - name: UCP | Install controller
   become: true
-  shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ UCP_VERSION }} install --admin-username "{{ UCP_USERNAME }}" --admin-password "{{ UCP_PASSWORD }}" --host-address "{{ inventory_hostname }}" --license "$(cat /tmp/DockerEE.lic)" --force-minimums
+  shell: docker container run --rm --name ucp -v /var/run/docker.sock:/var/run/docker.sock docker/ucp:{{ UCP_VERSION }} install --admin-username "{{ UCP_USERNAME }}" --admin-password "{{ UCP_PASSWORD }}" --host-address "{{ ansible_host }}" --license "$(cat /tmp/DockerEE.lic)" --force-minimums
   when: ucp_leader is defined
 
 - name: UCP | Get manager token
@@ -34,10 +34,10 @@
 
 - name: UCP | Install additional managers
   become: true
-  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['manager_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
+  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['manager_token'] }}" --advertise-addr "{{ ansible_host }}" "{{ hostvars[groups['ucp_managers'][0]]['ansible_host'] }}"
   when: ucp_manager is defined
 
 - name: UCP | Install workers
   become: true
-  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['worker_token'] }}" --advertise-addr "{{ inventory_hostname }}" "{{ groups['ucp_managers'][0] }}"
+  shell: docker swarm join --token "{{ hostvars[groups['ucp_managers'][0]]['worker_token'] }}" --advertise-addr "{{ ansible_host }}" "{{ hostvars[groups['ucp_managers'][0]]['ansible_host'] }}"
   when: ucp_leader is undefined and ucp_manager is undefined
