@@ -1,5 +1,6 @@
 provisionning/*.tfstate
 provisionning/.vagrant
+provisionning/variables.tf
 configuration/*.retry
 configuration/inventories/*.ini
 configuration/id_rsa
