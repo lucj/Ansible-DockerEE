@@ -119,14 +119,6 @@ Application | URL | Comments
 UCP         | https://ucp[0] | UCP_USERNAME / UCP_PASSWORD
 DTR         | https://dtr[0] |
 
-Disclaimer
-----------
-
-This playbook is dedicated to have Docker Datacenter up and runnin, in HA mode, g within a matter of minutes.
-This playbook should not be used as it is for production setup though.
-
-Pull Requests are welcome.
-
 License
 -------
 
