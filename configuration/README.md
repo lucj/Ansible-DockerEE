@@ -28,16 +28,16 @@ The following example of inventory.ini file defines:
 
 ```
 [ucp_managers]
-192.168.0.230 ucp_leader=1
-192.168.0.231 ucp_manager=1
-192.168.0.232 ucp_manager=1
+ucp-master-1 ansible_host=192.168.0.230 ucp_leader=1
+ucp-master-2 ansible_host=192.168.0.231 ucp_manager=1
+ucp-master-3 ansible_host=192.168.0.232 ucp_manager=1
 
 [ucp_workers]
-192.168.0.233 dtr_leader=1
-192.168.0.234 dtr_replica=1
-192.168.0.235 dtr_replica=1
-192.168.0.236
-192.168.0.237
+ucp-worker-1 ansible_host=192.168.0.233 dtr_leader=1
+ucp-worker-2 ansible_host=192.168.0.234 dtr_replica=1
+ucp-worker-3 ansible_host=192.168.0.235 dtr_replica=1
+ucp-worker-4 ansible_host=192.168.0.236
+ucp-worker-5 ansible_host=192.168.0.237
 
 [ucp:children]
 ucp_managers
@@ -64,7 +64,7 @@ Pre-installation
 $ ansible-playbook -i inventory.ini -k -u root pre-install.yml
 ```
 
-note: the command above needs the root password, this one will not be used in the deployment steps as the public/private keys of the "deploy" user will be used instead.
+Note: the command above needs the root password. If you do not have the root password but have a ssh key instead, run the command as: ```ansible-playbook -i inventory.ini --private-key=PATH_TO_KEY -u root pre-install.yml```.
 
 Deployment in multiple steps
 ----------------------------

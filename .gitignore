@@ -1,9 +1,11 @@
-provisionning/*.tfstate
 provisionning/.vagrant
-provisionning/variables.tf
-configuration/*.retry
+provisionning/DO/*.tfstate
+provisionning/DO/.terraform/
+provisionning/DO/variables.tf
+provisionning/DO/terraform.tfstate.backup
+configuration/DO/*.retry
 configuration/inventories/*.ini
-configuration/id_rsa
-configuration/group_vars/*.all.yml
-configuration/roles/install-nDVP/files/config*.json
+configuration/keys/id_rsa
+configuration/group_vars/*all.yml
 configuration/roles/install-ucp/files/*.lic
+configuration/roles/install-nDVP/files/config*.json
