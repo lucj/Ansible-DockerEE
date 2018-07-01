@@ -1,14 +1,14 @@
 [ucp_managers]
-IP1 ucp_leader=1
-IP2 ucp_manager=1
-IP3 ucp_manager=1
+ucp-master-1 ansible_host=IP1 ucp_leader=1
+ucp-master-2 ansible_host=IP2 ucp_manager=1
+ucp-master-3 ansible_host=IP3 ucp_manager=1
 
 [ucp_workers]
-IP4 dtr_leader=1
-IP5 dtr_replica=1
-IP6 dtr_replica=1
-IP7
-IP8
+ucp-worker-1 ansible_host=IP4 dtr_leader=1
+ucp-worker-2 ansible_host=IP5 dtr_replica=1
+ucp-worker-3 ansible_host=IP6 dtr_replica=1
+ucp-worker-4 ansible_host=IP7
+ucp-worker-5 ansible_host=IP8
 
 [ucp:children]
 ucp_managers
