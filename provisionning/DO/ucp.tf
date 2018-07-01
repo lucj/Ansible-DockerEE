@@ -54,7 +54,7 @@ resource "template_file" "worker_ansible" {
 
 resource "template_dir" "inventory" {
   source_dir = "${path.module}/templates"
-  destination_dir = "../../configuration/do-tf-inventories"
+  destination_dir = "../../configuration/inventories/DO-tf"
 
   vars {
     master_hosts = "${join("\n",template_file.master_ansible.*.rendered)}"

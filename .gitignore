@@ -5,6 +5,7 @@ provisionning/DO/variables.tf
 provisionning/DO/terraform.tfstate.backup
 configuration/DO/*.retry
 configuration/inventories/*.ini
+configuration/inventories/DO-tf/inventory.tpl
 configuration/keys/id_rsa
 configuration/group_vars/*all.yml
 configuration/roles/install-ucp/files/*.lic
