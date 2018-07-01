@@ -34,38 +34,22 @@ end
 Change the nodes_number and run ```vagrant up```
 Once the machine created, get their IP address and add them in the inventory file.
 
-### Terraform (on DigitalOcean)
+### Deploy on DigitalOcean with Terraform
 
-A simple ucp.tf file is provided
-
-```
-variable "do_token" {}
-
-# Configure the DigitalOcean Provider
-provider "digitalocean" {
-    token = "${var.do_token}"
-}
-
-# Create a web server
-resource "digitalocean_droplet" "ucp" {
-    count = "2"
-    image = "ubuntu-14-04-x64"
-    name = "ucp-${count.index+1}"
-    region = "lon1"
-    size = "2gb"
-    ssh_keys = ["FINGER_PRINTS_OR_IDS_OF_YOUR_SSH_KEY"]
-}
-```
+Create a *variables.tf* from the *variables.tf.example* file.
 
 Modification that needs to be done:
 
-- change the *count* to specify the number of node needed (total number of nodes of the ucp cluster)
-- change the ssh_keys so it uses the list of the fingerprints of your keys (eg: ssh_keys = ["e9:39:8c:f0:ae:6e:c6:e2:61:31:12:83:17:6e:fd:f3"])
-- run the following command using you DigitalOcean token:``` terraform apply -var="do_token=<DO_TOKEN>" ```
+- set the value of do_token with your own 
+- change the *count* to specify the number of managers and workers node needed
+- change the ssh_keys so it uses the list of the fingerprints of your keys (eg: ssh_keys = ["e9:39:8c:f0:ae:6e:c6:e2:61:31:12:83:17:6e:fd:f3"]) 
+- you can of course modify the other arguments to better match your needs.
 
-Note: you can of course modify the other arguments to better match your needs.
+Once the changes are done, run ```terraform plan``` to check everything is right, this is a dry run to ensure no error are detected before the launch.
 
-A *terraform.tfstate* file will be created, pick the IP addresses of the nodes and add them to the inventory file.
+Then run ```terraform apply``` to create the resources.
+
+The Ansible inventory file will be automatically created in *configuration/invntory/inventory.tpl* and could b used as-is in the configuration step
 
 ### Your way
 

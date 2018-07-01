@@ -44,7 +44,7 @@ resource "template_file" "master_ansible" {
 
 resource "template_file" "worker_ansible" {
   count = "${var.ucp_worker_number}"
-  template = "${count.index < 2 ? "$${name} $${ip} $${role}" : "$${name} $${ip}"}"
+  template = "${count.index < 3 ? "$${name} $${ip} $${role}" : "$${name} $${ip}"}"
   vars {
     name  = "${var.do_droplet_prefix}-worker-${count.index+1}"
     ip = "ansible_host=${element(digitalocean_droplet.ucp_worker.*.ipv4_address, count.index)}"
@@ -54,7 +54,7 @@ resource "template_file" "worker_ansible" {
 
 resource "template_dir" "inventory" {
   source_dir = "${path.module}/templates"
-  destination_dir = "../configuration/inventory"
+  destination_dir = "../../configuration/do-tf-inventories"
 
   vars {
     master_hosts = "${join("\n",template_file.master_ansible.*.rendered)}"
