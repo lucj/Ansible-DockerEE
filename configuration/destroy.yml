@@ -4,11 +4,15 @@
 - hosts: all
   roles:
   - role: remove-ucp
+  tags:
+  - ucp
 
 # Leave swarm
 - hosts: all
   roles:
   - role: remove-swarm
+  tags:
+  - swarm
 
 # Remove Docker daemon
 - hosts: all
